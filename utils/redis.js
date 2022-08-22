@@ -8,6 +8,10 @@ class RedisClient {
   }
 
   isAlive() {
+    // if (this.client.connected) {
+    //   return true;
+    // } else
+    //   return false;
     this.client.on('error', (err) => {
       console.log(`Error: ${err}`);
       return false;
