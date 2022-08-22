@@ -6,52 +6,48 @@
 // database: from the environment variable DB_DATABASE or default: files_manager
 // a function isAlive that returns true when the connection to MongoDB is a success otherwise, false
 // an asynchronous function nbUsers that returns the number of documents in the collection users
-
+// an asynchronous function nbFiles that returns the number of documents in the collection files
 // After the class definition, create and export an instance of DBClient called dbClient
 const { MongoClient } = require('mongodb');
 
+const host = process.env.DB_HOST || 'localhost';
+const port = process.env.DB_PORT || 27017;
+const database = process.env.DB_DATABASE || 'files_manager';
+
+const url = `mongodb://${host}:${port}/${database}`;
+
 class DBClient {
   constructor() {
-    this.host = process.env.DB_HOST || 'localhost';
-    this.port = process.env.DB_PORT || 27017;
-    this.database = process.env.DB_DATABASE || 'files_manager';
-    this.client = new MongoClient(`mongodb://${this.host}:${this.port}`, { useNewUrlParser: true });
-    this.client.on('error', (err) => console.log(`Error: ${err}`));
-
+    MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
+      if (client) {
+        this.db = client.db(database);
+        this.users = this.db.collection('users');
+        this.files = this.db.collection('files');
+      }
+      if (err) {
+        console.log(err);
+        this.db = false;
+      }
+    });
   }
 
   isAlive() {
-    if (this.client.connected) {
-      return true;
+    if (!this.db) {
+      return !!this.db;
     }
-    return false;
-  }
-  // an asynchronous function nbFiles that returns the number of documents in the collection files
-  nbFiles() {
-    return new Promise((resolve, reject) => {
-      this.client.db(this.database).collection('files').countDocuments((err, count) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(count);
-        }
-      });
-    });
-  }
-  // an asynchronous function nbUsers that returns the number of documents in the collection users
-  nbUsers() {
-    return new Promise((resolve, reject) => {
-      this.client.db(this.database).collection('users').countDocuments((err, count) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(count);
-        }
-      });
-    });
+    return !!this.db;
   }
 
+  async nbUsers() {
+    const numOfUsers = await this.users.countDocuments({});
+    return numOfUsers;
+  }
 
+  async nbFiles() {
+    const numOfFiles = await this.files.countDocuments({});
+    return numOfFiles;
+  }
 }
+
 const dbClient = new DBClient();
 module.exports = dbClient;
