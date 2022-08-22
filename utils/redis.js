@@ -8,15 +8,10 @@ class RedisClient {
   }
 
   isAlive() {
-    // if (this.client.connected) {
-    //   return true;
-    // } else
-    //   return false;
-    this.client.on('error', (err) => {
-      console.log(`Error: ${err}`);
+    if (this.client.connected) {
+      return true;
+    } else
       return false;
-    });
-    return true;
   }
 
   async get(key) {
@@ -31,7 +26,8 @@ class RedisClient {
   }
 
   async del(client, key) {
-    this.client.del(key);
+    const result = await promisify(this.client.del).bind(this.client);
+    await result(key);
   }
 }
 
