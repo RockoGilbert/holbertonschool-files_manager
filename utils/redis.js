@@ -10,8 +10,7 @@ class RedisClient {
   isAlive() {
     if (this.client.connected) {
       return true;
-    } else
-      return false;
+    } return false;
   }
 
   async get(key) {
@@ -27,7 +26,7 @@ class RedisClient {
 
   async del(client, key) {
     const result = await promisify(this.client.del).bind(this.client);
-    await result(key);
+    return result(key);
   }
 }
 
