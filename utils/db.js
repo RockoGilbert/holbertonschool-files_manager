@@ -1,3 +1,37 @@
+<<<<<<< HEAD
+import { MongoClient } from 'mongodb';
+
+class DBClient {
+  constructor() {
+    this.host = process.env.DB_HOST || 'localhost';
+    this.port = process.env.DB_PORT || 27017;
+    this.database = process.env.DB_DATABASE || 'files_manager';
+    this.client = new MongoClient(`mongodb://${this.host}:${this.port}`, { useUnifiedTopology: true });
+    this.client.connect();
+    this.db = this.client.db(this.database);
+  }
+
+  isAlive() {
+    if (this.client) {
+      return true;
+    }
+    return false;
+  }
+
+  async nbUsers() {
+    this.db = this.client.db(this.database);
+    const collection = await this.db.collection('users');
+    return collection.countDocuments();
+  }
+
+  async nbFiles() {
+    this.db = this.client.db(this.database);
+    const collection = await this.db.collection('files');
+    return collection.countDocuments();
+  }
+}
+
+=======
 // DBClient should have:
 
 // the constructor that creates a client to MongoDB:
@@ -52,5 +86,6 @@ class DBClient {
   }
 
 }
+>>>>>>> 2bb872f518a917b3ff8f25758c2f1eab6dfab85d
 const dbClient = new DBClient();
 module.exports = dbClient;
