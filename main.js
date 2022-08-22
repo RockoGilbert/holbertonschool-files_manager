@@ -1,9 +1,11 @@
 import dbClient from './utils/db';
 
 const waitConnection = () => {
+
     return new Promise((resolve, reject) => {
         let i = 0;
         const repeatFct = async () => {
+          console.log('repeatFct', "this is a test");
             await setTimeout(() => {
                 i += 1;
                 if (i >= 10) {
