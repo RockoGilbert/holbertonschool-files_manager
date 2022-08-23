@@ -1,4 +1,5 @@
-App Controller 
+// App Controller
+
 import RedisClient from '../utils/redis';
 import DBClient from '../utils/db';
 
