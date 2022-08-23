@@ -12,10 +12,9 @@
 
 const sha1 = require('sha1');
 const dbClient = require('../utils/db');
-const ObjectId = require('mongodb').ObjectId;
-const Redis = require('../utils/redis');
+// const ObjectId = require('mongodb').ObjectId;
+// const Redis = require('../utils/redis');
 
-const users = dbClient.db.collection('users');
 
 class UsersController {
     static postNew(req, res) {
@@ -27,6 +26,8 @@ class UsersController {
         } else if (!password) {
           return res.status(400).send({ error: 'Missing password' });
         }
+        const users = dbClient.db.collection('users');
+
         const user = await users.findOne({ email });
         if (user) {
           return res.status(400).send({ error: 'Already exist' });
@@ -36,6 +37,4 @@ class UsersController {
         return res.status(201).send(newUser.ops[0]);
       })();
     }
-
-
 }
